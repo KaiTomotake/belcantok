@@ -1,7 +1,12 @@
 [package]
 name = "belcantok"
-version = "0.1.0"
+version = "0.0.0"
 edition = "2024"
+authors = ["Kai Tomotake <kaitomotake@mail.rust-lang.jp>"]
+description = "The Belcantok Programming Language"
+repository = "https://github.com/KaiTomotake/belcantok"
+license = "MIT OR Apache-2.0"
+publish = false
 
 [dependencies]
 
