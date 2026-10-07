@@ -1,0 +1,24 @@
+name: Vulnerability check
+on:
+  schedule:
+    - cron: "0 21 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "Cargo.lock"
+      - "Cargo.toml"
+permissions:
+  contents: read
+  issues: write
+  checks: write
+jobs:
+  audit:
+    name: Vulnerability check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Run security audit
+        uses: rustsec/audit-check@v2.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

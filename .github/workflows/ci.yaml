@@ -1,0 +1,91 @@
+name: CI
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      rust: ${{ steps.filter.outputs.rust }}
+      rustfmt: ${{ steps.filter.outputs.rustfmt }}
+      workflows: ${{ steps.filter.outputs.workflows }}
+    steps:
+      - name: Filter changed paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            rust:
+              - "src/**"
+              - "tests/**"
+              - "Cargo.lock"
+              - "Cargo.toml"
+              - ".github/workflows/**"
+            rustfmt:
+              - "src/**"
+              - "tests/**"
+              - "Cargo.toml"
+              - "rustfmt.toml"
+              - ".github/workflows/**"
+            workflows:
+              - ".github/workflows/**"
+  test:
+    needs: changes
+    if: needs.changes.outputs.rust == 'true'
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Run tests
+        run: cargo test --locked -- --nocapture
+  clippy:
+    needs: changes
+    if: needs.changes.outputs.rust == 'true'
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - name: Run clippy
+        run: cargo clippy --tests --locked -- --deny warnings
+  rustfmt:
+    needs: changes
+    if: needs.changes.outputs.rustfmt == 'true'
+    name: Rust format check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rustfmt
+      - name: Run rustfmt
+        run: cargo fmt --check --verbose
+  yamlfmt:
+    needs: changes
+    if: needs.changes.outputs.workflows == 'true'
+    name: YAML format check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: "stable"
+      - name: Install yamlfmt
+        run: go install github.com/google/yamlfmt/cmd/yamlfmt@v0.21.0
+      - name: Run yamlfmt
+        run: yamlfmt -lint ./.github/workflows/*.yaml
