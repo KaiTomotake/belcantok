@@ -42,7 +42,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v6
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@1.99.0
       - name: Run tests
         run: cargo test --locked -- --nocapture
   clippy:
@@ -54,7 +54,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v6
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@1.99.0
         with:
           components: clippy
       - name: Run clippy
@@ -68,8 +68,9 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v6
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@nightly
+        uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: nightly-2026-10-01
           components: rustfmt
       - name: Run rustfmt
         run: cargo fmt --check --verbose
