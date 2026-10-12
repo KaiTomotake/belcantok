@@ -73,7 +73,7 @@ jobs:
           toolchain: nightly-2026-10-01
           components: rustfmt
       - name: Run rustfmt
-        run: cargo fmt --check --verbose
+        run: cargo +nightly-2026-10-01 fmt --check --verbose
   yamlfmt:
     needs: changes
     if: needs.changes.outputs.workflows == 'true'
