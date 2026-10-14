@@ -44,7 +44,7 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@1.99.0
       - name: Run tests
-        run: cargo test --locked -- --nocapture
+        run: cargo xtask test
   clippy:
     needs: changes
     if: needs.changes.outputs.rust == 'true'
@@ -58,7 +58,7 @@ jobs:
         with:
           components: clippy
       - name: Run clippy
-        run: cargo clippy --tests --locked -- --deny warnings
+        run: cargo xtask clippy
   rustfmt:
     needs: changes
     if: needs.changes.outputs.rustfmt == 'true'
@@ -73,7 +73,7 @@ jobs:
           toolchain: nightly-2026-10-01
           components: rustfmt
       - name: Run rustfmt
-        run: cargo +nightly-2026-10-01 fmt --check --verbose
+        run: cargo xtask fmt-check
   yamlfmt:
     needs: changes
     if: needs.changes.outputs.workflows == 'true'
