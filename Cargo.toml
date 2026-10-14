@@ -10,6 +10,9 @@ publish = false
 
 [dependencies]
 
+[workspace]
+members = ["xtask"]
+
 [lints.clippy]
 suspicious = "warn"
 complexity = "warn"
